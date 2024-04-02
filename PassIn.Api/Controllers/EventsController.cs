@@ -18,9 +18,10 @@ public class EventsController : ControllerBase
             useCase.Execute(request);
 
             return Created();
+
         }catch (ArgumentException ex)
         {
-
+            return BadRequest(ex.Message);
         }
     }
 }
