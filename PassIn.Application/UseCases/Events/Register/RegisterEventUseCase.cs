@@ -1,25 +1,43 @@
-﻿using PassIn.Communication.Requests;
+﻿using Microsoft.EntityFrameworkCore;
+using PassIn.Communication.Requests;
+using PassIn.Communication.Responses;
+using PassIn.Exceptions;
+using PassIn.Infrastructure;
 
 namespace PassIn.Application.UseCases.Events.Register
 {
     public class RegisterEventUseCase
     {
 
-        public void Execute(RequestEventJson request)
+        public ResponseRegisterEventJson Execute(RequestEventJson request)
         {
             Validate(request);
+
+            var dbContext = new PassInDBContext();
+            var entity = new Infrastructure.Entities.Event
+            {
+                Title = request.Title,
+                Details = request.Details,
+                Maximum_Attendees = request.MaximumAttendees,
+                Slug = request.Title.ToLower().Replace(" ", "-")
+                
+            };
+
+            dbContext.Events.Add(entity);
+            dbContext.SaveChanges();
+            return new ResponseRegisterEventJson { Id = entity.Id };
         }
 
         private void Validate(RequestEventJson request)
         {
             if (request.MaximumAttendees <= 0)
             {
-                throw new ArgumentException("ERROR: The maximum attendees number is invalid.");
+                throw new PassInException("ERROR: The maximum attendees number is invalid.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Title))
             {
-                throw new ArgumentException("ERROR: Title is invalid or empty.");
+                throw new PassInException("ERROR: Title is invalid or empty.");
             }
         }
 
