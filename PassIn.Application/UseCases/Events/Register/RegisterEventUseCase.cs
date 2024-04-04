@@ -32,12 +32,12 @@ namespace PassIn.Application.UseCases.Events.Register
         {
             if (request.MaximumAttendees <= 0)
             {
-                throw new PassInException("ERROR: The maximum attendees number is invalid.");
+                throw new ErrorOnValidationException("ERROR: The maximum attendees number is invalid.");
             }
 
             if (string.IsNullOrWhiteSpace(request.Title))
             {
-                throw new PassInException("ERROR: Title is invalid or empty.");
+                throw new ErrorOnValidationException("ERROR: Title is invalid or empty.");
             }
         }
 
